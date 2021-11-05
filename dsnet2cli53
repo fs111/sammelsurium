@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# script to create route53 dns entries for all peers of a dsnet (https://github.com/naggie/dsnet) manged wireguard network
+
+# requires https://github.com/barnybug/cli53 and https://github.com/stedolan/jq
+
+set -e
+
+usage() { echo "Usage: $0 [-i <file.json>] [-d <domain>] [-s <subdomain>.]" 1>&2; exit 1; }
+
+while getopts ":i:d:s:" o; do
+    case "${o}" in
+        i)
+            input=${OPTARG}
+            ;;
+        s)
+            subdomain=${OPTARG}
+            ;;
+
+        d)
+            domain=${OPTARG}
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${input}" ] || [ -z "${domain}" ]; then
+    usage
+fi
+
+
+for entry in $(jq -r  '.Peers[] | { Hostname, IP} | flatten | @csv '  ${input})
+do
+    sub="${subdomain:-}"
+    record=(${entry//,/ })
+    cli53 rrcreate --replace ${domain} "${record[0]//\"}.$sub 86400 A ${record[1]//\"}"
+done
