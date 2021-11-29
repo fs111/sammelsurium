@@ -3,5 +3,5 @@ while true
 do
     printf "\x1b[38;5;$(expr $RANDOM % 256)m"
     printf %"$COLUMNS"s | sed 's/ /█/g'
-    sleep .005
+    sleep .0$(expr $RANDOM / 100 % 75)
 done
