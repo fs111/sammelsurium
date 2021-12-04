@@ -6,9 +6,9 @@
 
 set -e
 
-usage() { echo "Usage: $0 [-i <file.json>] [-d <domain>] [-s <subdomain>.]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-i <file.json>] [-d <domain>] [-s <subdomain>.] -r" 1>&2; exit 1; }
 
-while getopts ":i:d:s:" o; do
+while getopts ":i:d:s:r6" o; do
     case "${o}" in
         i)
             input=${OPTARG}
@@ -19,6 +19,12 @@ while getopts ":i:d:s:" o; do
 
         d)
             domain=${OPTARG}
+            ;;
+        r)
+            dryRun=1 
+            ;;
+        6)
+            v6=1 
             ;;
         *)
             usage
@@ -31,10 +37,25 @@ if [ -z "${input}" ] || [ -z "${domain}" ]; then
     usage
 fi
 
+ekko=""
+if [ "${dryRun}" == 1 ]; then
+  ekko="echo "
+fi
 
-for entry in $(jq -r  '.Peers[] | { Hostname, IP} | flatten | @csv '  ${input})
+
+for entry in $(jq -r  '.Peers[] | { Hostname, IP} | flatten | @csv '  "${input}")
 do
     sub="${subdomain:-}"
     record=(${entry//,/ })
-    cli53 rrcreate --replace ${domain} "${record[0]//\"}.$sub 86400 A ${record[1]//\"}"
+    ${ekko} cli53 rrcreate --replace ${domain} "${record[0]//\"}.$sub 86400 A ${record[1]//\"}"
 done
+
+
+if [ "$v6" == 1 ] ; then 
+    for entry in $(jq -r  '.Peers[] | { Hostname, IP6} | flatten | @csv '  "${input}")
+    do
+        sub="${subdomain:-}"
+        record=(${entry//,/ })
+        ${ekko} cli53 rrcreate --replace ${domain} "${record[0]//\"}.$sub 86400 AAAA ${record[1]//\"}"
+    done
+fi
