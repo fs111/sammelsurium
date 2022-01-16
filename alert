@@ -1,0 +1,7 @@
+#!/bin/bash
+#use it for long running processes to get notified, when they are done like this:
+# make; alert make is done
+# for gnome use zenity and for pure X use xmessage -nearmouse
+#kdialog --msgbox "$*"
+#kdialog --passivepopup "$*" # for using the new notification stuff
+terminal-notifier -message "$*"
