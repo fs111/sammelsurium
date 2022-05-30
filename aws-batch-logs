@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# fetch logs from a aws batch job started up to 2 weeks ago
+
+DEFAULT_START_TIME="$(gdate "+%s%N" -d "2 weeks ago" | cut -b1-13)"
+
+aws logs get-log-events --log-group-name /aws/batch/job \
+    --log-stream-name "$1" \
+    --start-time "${DEFAULT_START_TIME}" \
+    --output text
+
