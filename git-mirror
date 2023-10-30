@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+DIR=$1
+
+while read -r dir 
+do
+    cd "$dir" || return
+    git fetch 
+    cd - || return
+done < "$(find "$DIR" -type d -mindepth 1 -maxdepth 1)"
