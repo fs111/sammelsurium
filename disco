@@ -2,6 +2,6 @@
 while true
 do
     printf "\x1b[38;5;$(expr $RANDOM % 256)m"
-    printf %"$COLUMNS"s | sed 's/ /█/g'
+    printf %"$(tput cols)"s | sed 's/ /█/g'
     sleep .0$(expr $RANDOM / 100 % 75)
 done
