@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+cd "$HOME/code/scroll/" || exit
+
+cat "$HOME/.bash_history" > "$HOME/code/scroll/bash_history"
+
+git commit -am"history backup of $(date '+%Y%m%d-%H:%M:%S')" > /dev/null
