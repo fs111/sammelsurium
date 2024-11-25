@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+curl \
+    -H "accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+	-H "accept-language: en-GB,en;q=0.5" \
+	-H "connection: keep-alive" \
+	-H "upgrade-insecure-requests: 1" \
+	-H "priority: u=0, i" \
+	-H "sec-fetch-dest: document" \
+	-H "sec-fetch-user: ?1" \
+	-H "sec-fetch-site:  none" \
+	-H "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:132.0) Gecko/20100101 Firefox/132.0" \
+	-H "sec-fetch-mode: navigate" \
+    $*
